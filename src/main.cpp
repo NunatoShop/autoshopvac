@@ -12,6 +12,23 @@
 // WIFI
 const char* hostname = "Shopvac";
 
+// PIN DEFINITION
+const int CURRENT_SENSOR_PIN = A4;
+const int MANUAL_BUTTON_PIN = 13;
+const int RELAY_PIN = 26;
+
+// CURRENT SENSOR
+const int SAMPLE_TIME_MS = 1000;
+const float VOLTAGE_TO_START = 2.20; // You should play with this value during test for better performance in your system.
+int currentSensorValue = 0;
+float voltage = 0;
+
+// BUTTON
+const int BUTTON_CLOSE_IN = HIGH;
+int currentButtonState = !BUTTON_CLOSE_IN;
+int nextButtonState = !BUTTON_CLOSE_IN;
+
+// SERVER
 AsyncWebServer server(80);
 
 /* Attach ESP-DASH to AsyncWebServer */
@@ -21,32 +38,16 @@ Card cardButton(&dashboard, BUTTON_CARD, "Shopvac");
 bool cardButtonValue = false;
 Card cardVoltage(&dashboard, GENERIC_CARD, "Voltage", "V");
 
-// PIN DEFINITION
-const int CURRENT_SENSOR_PIN = A4;
-const int MANUAL_BUTTON_PIN = 13;
-
-// RELAY
-const int RELAY_PIN = 26;
-
-// CURRENT SENSOR
-const int SAMPLE_TIME_MS = 1000;
-const float VOLTAGE_TO_START = 2.20;
-int currentSensorValue = 0;
-float voltage = 0;
-
-// BUTTON
-const int BUTTON_CLOSE_IN = HIGH;
-int currentButtonState = !BUTTON_CLOSE_IN;
-int nextButtonState = !BUTTON_CLOSE_IN;
-
 // Inits the wifi connection.
 void initWifi() {
   WiFi.mode(WIFI_STA);
   WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, INADDR_NONE);
   WiFi.setHostname(hostname);
+
   const char* ssid = getWifiSsid();
   const char* password = getWifiPassword();
   Serial.printf("Connecting to %s with password %s", ssid, password);
+
   WiFi.begin(ssid, password);
 
    // Wait for connection
@@ -63,7 +64,7 @@ void initWifi() {
 }
 
 /**
- * Inits the server.
+ * @brief Inits the server.
  * 
  */
 void initServer() {
@@ -77,7 +78,7 @@ void initServer() {
 }
 
 /**
- * Inits the sensors, button & relay.
+ * @brief Inits the sensors.
  * 
  */
 void initSensors() {
@@ -87,7 +88,7 @@ void initSensors() {
 
   currentButtonState = digitalRead(MANUAL_BUTTON_PIN);
   
-
+  // Callback to turn on/off the shop vacuum from the browser.
   cardButton.attachCallback([&](bool value){
     cardButtonValue = value;
     cardButton.update(value);
