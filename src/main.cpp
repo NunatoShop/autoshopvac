@@ -30,7 +30,7 @@ const int RELAY_PIN = 26;
 
 // CURRENT SENSOR
 const int SAMPLE_TIME_MS = 1000;
-const float VOLTAGE_TO_START = 2.30;
+const float VOLTAGE_TO_START = 2.20;
 int currentSensorValue = 0;
 float voltage = 0;
 
@@ -44,7 +44,10 @@ void initWifi() {
   WiFi.mode(WIFI_STA);
   WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, INADDR_NONE);
   WiFi.setHostname(hostname);
-  WiFi.begin(getWifiSsid(), getWifiPassword());
+  const char* ssid = getWifiSsid();
+  const char* password = getWifiPassword();
+  Serial.printf("Connecting to %s with password %s", ssid, password);
+  WiFi.begin(ssid, password);
 
    // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
@@ -54,7 +57,7 @@ void initWifi() {
 
   Serial.println("");
   Serial.print("Connected to ");
-  Serial.println(getWifiSsid());
+  Serial.println(ssid);
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 }

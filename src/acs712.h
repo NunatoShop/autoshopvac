@@ -1,0 +1,1 @@
+int getMaxValue(int acs712SensorPin, int sampleTime);
