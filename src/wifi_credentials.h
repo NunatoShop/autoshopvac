@@ -1,0 +1,3 @@
+char* getWifiSsid();
+
+char* getWifiPassword();
