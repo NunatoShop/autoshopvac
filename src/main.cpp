@@ -3,7 +3,6 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <AsyncElegantOTA.h>
-#include <ESPDash.h>
 
 #include <wifi_credentials.h>
 #include <acs712.h>
@@ -30,13 +29,6 @@ int nextButtonState = !BUTTON_CLOSE_IN;
 
 // SERVER
 AsyncWebServer server(80);
-
-/* Attach ESP-DASH to AsyncWebServer */
-ESPDash dashboard(&server); 
-
-Card cardButton(&dashboard, BUTTON_CARD, "Shopvac");
-bool cardButtonValue = false;
-Card cardVoltage(&dashboard, GENERIC_CARD, "Voltage", "V");
 
 // Inits the wifi connection.
 void initWifi() {
@@ -87,19 +79,6 @@ void initSensors() {
   initRelay(RELAY_PIN);
 
   currentButtonState = digitalRead(MANUAL_BUTTON_PIN);
-  
-  // Callback to turn on/off the shop vacuum from the browser.
-  cardButton.attachCallback([&](bool value){
-    cardButtonValue = value;
-    cardButton.update(value);
-    dashboard.sendUpdates();
-
-    if (value) {
-      turnOnShopVac(RELAY_PIN);
-    } else {
-      turnOffShopVac(RELAY_PIN, 1);
-    }
-  });
 }
 
 /**
@@ -118,35 +97,31 @@ void setup() {
  * 
  */
 void loop() {
-  if (!cardButtonValue) {
-    nextButtonState = digitalRead(MANUAL_BUTTON_PIN);
-    // Button has changed
-    if (currentButtonState != nextButtonState) {
-      if (nextButtonState == BUTTON_CLOSE_IN) {
-        turnOnShopVac(RELAY_PIN);
-      } else {
-        turnOffShopVac(RELAY_PIN, 1);
-      }
-      currentButtonState = nextButtonState;
-    } else if (currentButtonState != BUTTON_CLOSE_IN) {
-      // Measuaring the tool
-      currentSensorValue = getMaxValue(CURRENT_SENSOR_PIN, SAMPLE_TIME_MS);
-      Serial.printf("sensor value %d\n", currentSensorValue);
-      voltage = (float) currentSensorValue / 4095 * 3.3;
-      Serial.printf("Voltage %.2fv\n", voltage);
-      cardVoltage.update(voltage);
-      dashboard.sendUpdates();
-
-      // If voltage is above 3.2, the loop should be discarded.
-      if (voltage <= 3.2) {
-        if (voltage >= VOLTAGE_TO_START && !isRelayClosed(RELAY_PIN)) {
-          turnOnShopVac(RELAY_PIN);
-        } else if (voltage < VOLTAGE_TO_START && isRelayClosed(RELAY_PIN)) {
-          turnOffShopVac(RELAY_PIN, 5);
-        }
-      }
-
-      delay(500);
+  nextButtonState = digitalRead(MANUAL_BUTTON_PIN);
+  // Button has changed
+  if (currentButtonState != nextButtonState) {
+    if (nextButtonState == BUTTON_CLOSE_IN) {
+      turnOnShopVac(RELAY_PIN);
+    } else {
+      turnOffShopVac(RELAY_PIN, 1);
     }
+    currentButtonState = nextButtonState;
+  } else if (currentButtonState != BUTTON_CLOSE_IN) {
+    // Measuaring the tool
+    currentSensorValue = getMaxValue(CURRENT_SENSOR_PIN, SAMPLE_TIME_MS);
+    Serial.printf("sensor value %d\n", currentSensorValue);
+    voltage = (float) currentSensorValue / 4095 * 3.3;
+    Serial.printf("Voltage %.2fv\n", voltage);
+
+    // If voltage is above 3.2, the loop should be discarded.
+    if (voltage <= 3.2) {
+      if (voltage >= VOLTAGE_TO_START && !isRelayClosed(RELAY_PIN)) {
+        turnOnShopVac(RELAY_PIN);
+      } else if (voltage < VOLTAGE_TO_START && isRelayClosed(RELAY_PIN)) {
+        turnOffShopVac(RELAY_PIN, 5);
+      }
+    }
+
+    delay(500);
   }
 }
