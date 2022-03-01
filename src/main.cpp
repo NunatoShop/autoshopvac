@@ -59,8 +59,8 @@ void initServer() {
  * 
  */
 void initSensors() {
-  initButton();
-  initRelay();
+  InitButton();
+  InitRelay();
 }
 
 /**
@@ -79,9 +79,9 @@ void setup() {
  * 
  */
 void loop() {
-  if (isButtonActive()) {
-    doButtonAction();
+  if (IsButtonActive()) {
+    DoButtonAction();
   } else {
-    checkConnectedTool();
+    CheckConnectedTool();
   }
 }

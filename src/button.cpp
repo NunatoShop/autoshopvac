@@ -8,24 +8,24 @@ const int BUTTON_CLOSE_IN = HIGH;
 int lastState = !BUTTON_CLOSE_IN;
 int buttonState = !BUTTON_CLOSE_IN;
 
-void initButton() {
+void InitButton() {
   pinMode(BUTTON_PIN, INPUT_PULLDOWN);
   buttonState = digitalRead(BUTTON_PIN);
 }
 
-bool isButtonActive() {
+bool IsButtonActive() {
   buttonState = digitalRead(BUTTON_PIN);
   return buttonState == BUTTON_CLOSE_IN;
 }
 
-void doButtonAction() {
+void DoButtonAction() {
   buttonState = digitalRead(BUTTON_PIN);
   // Button has changed
   if (lastState != buttonState) {
     if (buttonState == BUTTON_CLOSE_IN) {
-      turnOnShopVac();
+      TurnOnShopVac();
     } else {
-      turnOffShopVac(1);
+      TurnOffShopVac(1);
     }
 
     lastState = buttonState;

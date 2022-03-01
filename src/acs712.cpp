@@ -11,6 +11,11 @@ const float VOLTAGE_TO_START = 2.20; // You should play with this value during t
 int currentValue = 0;
 float voltage = 0;
 
+/**
+ * @brief Get the max value from the sensor during a sample time.
+ * 
+ * @return int max value.
+ */
 int getMaxValue() {
     int sensorMax = 0;
     uint32_t start_time = millis();
@@ -26,8 +31,8 @@ int getMaxValue() {
     return sensorMax;
 }
 
-void checkConnectedTool() {
-if (!isButtonActive()) {
+void CheckConnectedTool() {
+if (!IsButtonActive()) {
     // Measuaring the tool
     currentValue = getMaxValue();
     Serial.printf("sensor value is %d\n", currentValue);
@@ -36,10 +41,10 @@ if (!isButtonActive()) {
 
     // If voltage is above 3.2, the loop should be discarded because it could be a line noise.
     if (voltage <= 3.2) {
-      if (voltage >= VOLTAGE_TO_START && !isRelayClosed()) {
-        turnOnShopVac();
-      } else if (voltage < VOLTAGE_TO_START && isRelayClosed()) {
-        turnOffShopVac(5);
+      if (voltage >= VOLTAGE_TO_START && !IsShopVacOn()) {
+        TurnOnShopVac();
+      } else if (voltage < VOLTAGE_TO_START && IsShopVacOn()) {
+        TurnOffShopVac(5);
       }
     }
   }

@@ -1,25 +1,25 @@
 /**
  * @brief Inits the relay.
  */
-void initRelay();
+void InitRelay();
 
 /**
- * @brief Verifies if the relay is closed.
+ * @brief Verifies if the shop vac is on.
  *
- * @return true  when the relay is closed.
- * @return false  when the relay is open.
+ * @return true  when the shop vac is on.
+ * @return false  when the shop vac is off.
  */
-bool isRelayClosed();
+bool IsShopVacOn();
 
 /**
  * @brief Turns on the shop vac.
  * 
  */
-void turnOnShopVac();
+void TurnOnShopVac();
 
 /**
  * @brief Turns off the shop vac.
  * 
  * @param d Seconds before turn it off.
  */
-void turnOffShopVac(int d);
+void TurnOffShopVac(int d);

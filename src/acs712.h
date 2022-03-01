@@ -1,11 +1,5 @@
-
 /**
- * @brief Samples for a time (sampleTime) and obtains the max value read it from the sensor in that time.
+ * @brief checks changes in the connected tool and start or stop the shopvac.
  * 
- * @param sampleTime 
- * 
- * @return int 
  */
-int getMaxValue(int sampleTime);
-
-void checkConnectedTool();
+void CheckConnectedTool();

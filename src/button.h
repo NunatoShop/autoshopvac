@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
-void initButton();
+void InitButton();
 
-bool isButtonActive();
+bool IsButtonActive();
 
-void doButtonAction();
+void DoButtonAction();
