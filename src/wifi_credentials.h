@@ -3,11 +3,11 @@
  * 
  * @return char* 
  */
-char* getWifiSsid();
+char* GetWifiSsid();
 
 /**
  * @brief Get the Wifi Password.
  * 
  * @return char* 
  */
-char* getWifiPassword();
+char* GetWifiPassword();

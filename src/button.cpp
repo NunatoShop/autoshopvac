@@ -4,25 +4,24 @@
 
 const uint8_t BUTTON_PIN = 13;
 
-const int BUTTON_CLOSE_IN = HIGH;
-int lastState = !BUTTON_CLOSE_IN;
-int buttonState = !BUTTON_CLOSE_IN;
+const int BUTTON_ON = HIGH;
+int buttonState = !BUTTON_ON;
+int lastState = !BUTTON_ON;
 
 void InitButton() {
   pinMode(BUTTON_PIN, INPUT_PULLDOWN);
-  buttonState = digitalRead(BUTTON_PIN);
 }
 
 bool IsButtonActive() {
-  buttonState = digitalRead(BUTTON_PIN);
-  return buttonState == BUTTON_CLOSE_IN;
+  return digitalRead(BUTTON_PIN) == BUTTON_ON ||
+    lastState == BUTTON_ON;
 }
 
 void DoButtonAction() {
   buttonState = digitalRead(BUTTON_PIN);
   // Button has changed
   if (lastState != buttonState) {
-    if (buttonState == BUTTON_CLOSE_IN) {
+    if (buttonState == BUTTON_ON) {
       TurnOnShopVac();
     } else {
       TurnOffShopVac(1);

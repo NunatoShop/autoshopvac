@@ -20,11 +20,14 @@ This project has the purpose to create a shop vacuum controller that measure if 
 There is a file that isn't included in the project that is `wifi_credentials.cpp` that has to contains
 
 ```c++
-char* getWifiSsid() {
-    return "Your WiFi Name";
+char* ssid = (char*) "WiFi Name";
+char* password = (char*) "WiFi Password";
+
+char* GetWifiSsid() {
+    return ssid;
 }
 
-char* getWifiPassword() {
-    return "Your WiFi Password";
+char* GetWifiPassword() {
+    return password;
 }
 ```

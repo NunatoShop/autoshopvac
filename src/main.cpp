@@ -21,8 +21,8 @@ void initWifi() {
   WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, INADDR_NONE);
   WiFi.setHostname(hostname);
 
-  const char* ssid = getWifiSsid();
-  const char* password = getWifiPassword();
+  const char* ssid = GetWifiSsid();
+  const char* password = GetWifiPassword();
   Serial.printf("Connecting to %s with password %s", ssid, password);
 
   WiFi.begin(ssid, password);
@@ -47,6 +47,10 @@ void initWifi() {
 void initServer() {
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
     request->send(200, "text/plain", "Hi! I am the Shopvac.");
+  });
+
+  server.on("/ping", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send( 200, "text/plain", "pong");
   });
 
   AsyncElegantOTA.begin(&server);    // Start ElegantOTA
