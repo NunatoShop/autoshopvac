@@ -8,7 +8,7 @@ const uint8_t SENSOR_PIN = A4;
 const int SAMPLE_TIME_MS = 1000;
 const float VOLTAGE_TO_START = 2.30; // You should play with this value during test for better performance in your system.
 
-int currentValue = 0;
+int value = 0;
 float voltage = 0;
 
 /**
@@ -16,7 +16,7 @@ float voltage = 0;
  * 
  * @return int max value.
  */
-int GetMaxValue() {
+int getMaxValue() {
     int sensorMax = 0;
     uint32_t start_time = millis();
     
@@ -31,11 +31,19 @@ int GetMaxValue() {
     return sensorMax;
 }
 
+int GetValue() {
+  return value;
+}
+
+float GetVoltage() {
+  return voltage;
+}
+
 void CheckConnectedTool() {
     // Measuaring the tool
-    currentValue = GetMaxValue();
-    Serial.printf("sensor value is %d\n", currentValue);
-    voltage = (float) currentValue / 4095 * 3.3;
+    value = getMaxValue();
+    Serial.printf("sensor value is %d\n", value);
+    voltage = (float) value / 4095 * 3.3;
     Serial.printf("Sensor voltage is %.2fv\n", voltage);
 
     // If voltage is above 3.2, the loop should be discarded because it could be a line noise.

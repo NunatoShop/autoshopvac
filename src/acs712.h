@@ -1,9 +1,6 @@
-/**
- * @brief Get the max value from the sensor during a sample time.
- * 
- * @return int max value.
- */
-int GetMaxValue();
+int GetValue();
+
+float GetVoltage();
 
 /**
  * @brief checks changes in the connected tool and start or stop the shopvac.

@@ -53,6 +53,14 @@ void initServer() {
     request->send( 200, "text/plain", "pong");
   });
 
+   server.on("/sensor", HTTP_GET, [](AsyncWebServerRequest *request) {
+     int value = GetValue();
+     float voltage = GetVoltage();
+    char json[40];
+    sprintf(json, "{\"value\":%d,\"voltage\":%.2f}", value, voltage);
+    request->send( 200, "application/json", json);
+  });
+
   AsyncElegantOTA.begin(&server);    // Start ElegantOTA
   server.begin();
   Serial.println("HTTP server started");
