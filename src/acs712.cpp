@@ -6,10 +6,10 @@
 const uint8_t SENSOR_PIN = A4;
 
 const int SAMPLE_TIME_MS = 1000;
-const float VOLTAGE_TO_START = 2.30; // You should play with this value during test for better performance in your system.
 
 int value = 0;
 float voltage = 0;
+float startingVoltage = 2.20; // You should play with this value during test for better performance in your system.
 
 /**
  * @brief Get the max value from the sensor during a sample time.
@@ -39,6 +39,10 @@ float GetVoltage() {
   return voltage;
 }
 
+float GetStartingVoltage() {
+  return startingVoltage;
+}
+
 void CheckConnectedTool() {
     // Measuaring the tool
     value = getMaxValue();
@@ -48,9 +52,9 @@ void CheckConnectedTool() {
 
     // If voltage is above 3.2, the loop should be discarded because it could be a line noise.
     if (voltage <= 3.2) {
-      if (voltage >= VOLTAGE_TO_START && !IsShopVacOn()) {
+      if (voltage >= startingVoltage && !IsShopVacOn()) {
         TurnOnShopVac();
-      } else if (voltage < VOLTAGE_TO_START && IsShopVacOn()) {
+      } else if (voltage < startingVoltage && IsShopVacOn()) {
         TurnOffShopVac(5);
       }
     }

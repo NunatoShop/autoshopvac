@@ -54,10 +54,11 @@ void initServer() {
   });
 
    server.on("/sensor", HTTP_GET, [](AsyncWebServerRequest *request) {
-     int value = GetValue();
-     float voltage = GetVoltage();
-    char json[40];
-    sprintf(json, "{\"value\":%d,\"voltage\":%.2f}", value, voltage);
+    int value = GetValue();
+    float voltage = GetVoltage();
+    float startingVoltage = GetStartingVoltage();
+    char json[64];
+    sprintf(json, "{\"value\":%d,\"voltage\":%.2f,\"starting_voltage\":%.2f}", value, voltage, startingVoltage);
     request->send( 200, "application/json", json);
   });
 
