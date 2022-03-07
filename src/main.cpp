@@ -9,36 +9,13 @@
 #include <button.h>
 #include <relay.h>
 
+#define ONBOARD_LED  2
+
 // WIFI
 const char* hostname = "Shopvac";
 
 // SERVER
 AsyncWebServer server(80);
-
-// Inits the wifi connection.
-void initWifi() {
-  WiFi.mode(WIFI_STA);
-  WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, INADDR_NONE);
-  WiFi.setHostname(hostname);
-
-  const char* ssid = GetWifiSsid();
-  const char* password = GetWifiPassword();
-  Serial.printf("Connecting to %s with password %s", ssid, password);
-
-  WiFi.begin(ssid, password);
-
-   // Wait for connection
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-
-  Serial.println("");
-  Serial.print("Connected to ");
-  Serial.println(ssid);
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
-}
 
 /**
  * @brief Inits the server.
@@ -72,8 +49,56 @@ void initServer() {
  * 
  */
 void initSensors() {
+  pinMode(ONBOARD_LED,OUTPUT);
+
   InitButton();
   InitRelay();
+}
+
+/**
+ * @brief Inits the WiFi and then monitor its status and if for some reason is lost, it will try to reconnected.
+ * 
+ * @param parameter 
+ */
+void keepWiFiAlive(void * parameter) {
+  WiFi.mode(WIFI_STA);
+  WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, INADDR_NONE);
+  WiFi.setHostname(hostname);
+
+  const char* ssid = GetWifiSsid();
+  const char* password = GetWifiPassword();
+  Serial.printf("Connecting to %s with password %s", ssid, password);
+
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  digitalWrite(ONBOARD_LED, HIGH);
+  Serial.println("");
+  Serial.print("Connected to ");
+  Serial.println(ssid);
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+
+  initServer();
+
+  for(;;) {
+    if (WiFi.status() != WL_CONNECTED) {
+      digitalWrite(ONBOARD_LED, LOW);
+      Serial.print("Reconnecting to WiFi");
+      WiFi.disconnect();
+      WiFi.begin(ssid, password);
+      while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+      }
+      digitalWrite(ONBOARD_LED, HIGH);
+    }
+    delay(5000);
+  }
 }
 
 /**
@@ -82,9 +107,10 @@ void initSensors() {
 void setup() {
   Serial.begin(115200);
 
-  initWifi();
-  initServer();
   initSensors();
+  
+  // Task to init and monitoring the WiFi connection.
+  xTaskCreatePinnedToCore(keepWiFiAlive, "keepWiFiAlive", 10000, NULL, 0, NULL, 0);            
 }
 
 /**
